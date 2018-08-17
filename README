@@ -1,0 +1,6 @@
+Library for communicating with the ADS115 ADC module.
+
+Initially built for the ADS115 on capybara that monitors capacitor bank
+voltages.
+
+
