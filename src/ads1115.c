@@ -2,6 +2,8 @@
 #include <stdint.h>
 
 #include <libio/console.h>
+#include "libmspware/driverlib.h"
+#include <libmspware/eusci_b_i2c.h>
 
 #include "ads1115.h"
 
@@ -49,14 +51,6 @@ uint8_t readDataByte(){
 }
 
 uint16_t ads_se_read(uint8_t channel) {
-  EUSCI_B_I2C_setSlaveAddress(EUSCI_B0_BASE, MAGNETOMETER_SLAVE_ADDRESS);
-
-  EUSCI_B_I2C_setMode(EUSCI_B0_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
-
-  EUSCI_B_I2C_enable(EUSCI_B0_BASE);
-
-  while(EUSCI_B_I2C_isBusBusy(EUSCI_B0_BASE));
-
   uint16_t config;
   config =  ADS1015_REG_CONFIG_CQUE_NONE    | // Disable the comparator (default val)
             ADS1015_REG_CONFIG_CLAT_NONLAT  | // Non-latching (default val)
@@ -83,6 +77,15 @@ uint16_t ads_se_read(uint8_t channel) {
       config |= ADS1015_REG_CONFIG_MUX_SINGLE_3;
       break;
   }
+  //printf("CONFIG: %x\r\n",config); 
+  EUSCI_B_I2C_setSlaveAddress(EUSCI_B0_BASE, ADS_SLAVE_ADDR);
+
+  EUSCI_B_I2C_setMode(EUSCI_B0_BASE, EUSCI_B_I2C_TRANSMIT_MODE);
+
+  EUSCI_B_I2C_enable(EUSCI_B0_BASE);
+
+  while(EUSCI_B_I2C_isBusBusy(EUSCI_B0_BASE));
+
 
   // Write config register
   while(EUSCI_B_I2C_isBusBusy(EUSCI_B0_BASE));
@@ -101,7 +104,8 @@ uint16_t ads_se_read(uint8_t channel) {
   EUSCI_B_I2C_masterSendMultiByteStop(EUSCI_B0_BASE);
   while(EUSCI_B_I2C_isBusBusy(EUSCI_B0_BASE));
   // Adding delay_cycles in here to handle the conversion delay
-  __delay_cycles(8000);
+  // TODO figure out if we can sustain this...
+  __delay_cycles(80000);
 
   EUSCI_B_I2C_disable(EUSCI_B0_BASE);
 
