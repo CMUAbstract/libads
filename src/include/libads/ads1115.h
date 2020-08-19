@@ -94,8 +94,8 @@ typedef enum
 /*==========================================================================*/
 // Functions for our library
 uint16_t ads_se_read(uint8_t channel);
-uint16_t ads_se_read_new(uint8_t channel);
-
+void ads_se_comp_setup(uint8_t channel);
+uint16_t as_get_last_conversion(uint8_t channel);
 
 
 #endif
