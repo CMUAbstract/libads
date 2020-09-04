@@ -63,35 +63,17 @@ uint16_t ads_se_read(uint8_t channel) {
   /* normal measurement mode (MS0 MS1 = 00) */
   EUSCI_B_I2C_masterSendStart(EUSCI_B0_BASE);
   PRINTF("Sent start\r\n");
-  P1OUT |= BIT0;
-  P1DIR |= BIT0;
-  P1OUT &= ~BIT0;
   EUSCI_B_I2C_masterSendMultiByteNext(EUSCI_B0_BASE, ADS1015_REG_POINTER_CONFIG);
-  P1OUT |= BIT1;
-  P1DIR |= BIT1;
-  P1OUT &= ~BIT1;
   PRINTF("wrote reg\r\n");
   // Send MSB of config
   EUSCI_B_I2C_masterSendMultiByteNext(EUSCI_B0_BASE, config >> 8);
-  P1OUT |= BIT1;
-  P1DIR |= BIT1;
-  P1OUT &= ~BIT1;
   PRINTF("wrote config\r\n");
   // Send LSB of config
   EUSCI_B_I2C_masterSendMultiByteNext(EUSCI_B0_BASE, config & 0xFF);
-  P1OUT |= BIT1;
-  P1DIR |= BIT1;
-  P1OUT &= ~BIT1;
   PRINTF("wrote config2\r\n");
   EUSCI_B_I2C_masterSendMultiByteStop(EUSCI_B0_BASE);
-  P1OUT |= BIT1;
-  P1DIR |= BIT1;
-  P1OUT &= ~BIT1;
   PRINTF("Sent stop\r\n");
   while(EUSCI_B_I2C_isBusBusy(EUSCI_B0_BASE));
-  P1OUT |= BIT0;
-  P1DIR |= BIT0;
-  P1OUT &= ~BIT0;
   PRINTF("Waiting...\r\n");
   // Adding delay_cycles in here to handle the conversion delay
   // TODO figure out if we can sustain this...
